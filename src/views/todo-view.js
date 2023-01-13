@@ -41,8 +41,8 @@ class TodoView extends LitElement {
       </div>
 
       <!--To display the todo's-->
-      <div class="todo-list">
-        ${this.todos.map(
+      <div class="todos-list">
+        ${this.applyFilter(this.todos).map(
           (todo) => html`
             <div class="todo-item">
               <vaadin-checkbox
@@ -56,13 +56,21 @@ class TodoView extends LitElement {
           `
         )}
       </div>
-    `;
-  }
 
-  updateTodoStatus(updatedTodo, complete) {
-    this.todos = this.todos.map((todo) =>
-      updatedTodo === todo ? { ...updatedTodo, complete } : todo
-    );
+      <vaadin-radio-group
+        class="visibility-filters"
+        value="${this.filter}"
+        @value-changed="${this.filterChanged}">
+        ${Object.values(VisibilityFilters).map(
+          (filter) => html` <vaadin-radio-button value="${filter}">
+            ${filter}
+          </vaadin-radio-button>`
+        )}
+      </vaadin-radio-group>
+      <vaadin-button @click="${this.clearCompleted}">
+        Clear completed
+      </vaadin-button>
+    `;
   }
 
   //IF the user press Enter button after input
@@ -88,6 +96,31 @@ class TodoView extends LitElement {
         },
       ];
       this.task = "";
+    }
+  }
+
+  updateTodoStatus(updatedTodo, complete) {
+    this.todos = this.todos.map((todo) =>
+      updatedTodo === todo ? { ...updatedTodo, complete } : todo
+    );
+  }
+
+  filterChanged(e) {
+    this.filter = e.target.value;
+  }
+
+  clearCompleted() {
+    this.todos = this.todos.filter((todo) => !todo.complete);
+  }
+
+  applyFilter(todos) {
+    switch (this.filter) {
+      case VisibilityFilters.SHOW_ACTIVE:
+        return todos.filter((todo) => !todo.complete);
+      case VisibilityFilters.SHOW_COMPLETED:
+        return todos.filter((todo) => todo.complete);
+      default:
+        return todos;
     }
   }
 }
