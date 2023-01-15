@@ -5,6 +5,7 @@ import "@vaadin/checkbox";
 import "@vaadin/vaadin-radio-button/vaadin-radio-button";
 import "@vaadin/radio-group";
 
+//filters for the radio
 const VisibilityFilters = {
   SHOW_ALL: "All",
   SHOW_ACTIVE: "Active",
@@ -22,6 +23,7 @@ class TodoView extends LitElement {
   }
 
   constructor() {
+    //making state like functional component
     super();
     this.todos = [];
     this.filter = VisibilityFilters.SHOW_ALL;
@@ -99,20 +101,24 @@ class TodoView extends LitElement {
     }
   }
 
+  //For updating todo status
   updateTodoStatus(updatedTodo, complete) {
     this.todos = this.todos.map((todo) =>
       updatedTodo === todo ? { ...updatedTodo, complete } : todo
     );
   }
 
+  //For changing the filter
   filterChanged(e) {
     this.filter = e.target.value;
   }
 
+  //For clearing the completed task.
   clearCompleted() {
     this.todos = this.todos.filter((todo) => !todo.complete);
   }
 
+  //for applying the filter
   applyFilter(todos) {
     switch (this.filter) {
       case VisibilityFilters.SHOW_ACTIVE:
